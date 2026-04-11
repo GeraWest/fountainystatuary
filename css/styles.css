@@ -24,32 +24,34 @@ body {
   padding: 24px 6%;
   display: flex;
   align-items: center;
-  background: transparent; /* Transparente al inicio para ver el video */
+  /* Degradado sutil de arriba hacia abajo para asegurar contraste del texto */
+  background: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.2) 50%, transparent 100%);
   z-index: 1000;
-  transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .header.scrolled {
   padding: 14px 6%;
-  background: #0a283c; /* Sólido al hacer scroll */
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  background: #0a283c;
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
 }
 
 .logo {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 30px; /* Un poco más grande para esta fuente */
+  font-size: 30px; 
   font-weight: 700;
-  font-style: italic; /* Semi-cursiva */
+  font-style: italic;
   color: #ffffff;
   letter-spacing: 1px;
   margin-right: 60px;
-  text-transform: none; /* Mejor en minúsculas/mixto para cursiva */
+  text-transform: none;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  transition: all 0.4s ease;
   position: relative;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  /* Sombra de texto reforzada para máxima visibilidad */
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
 .logo::after {
@@ -81,7 +83,7 @@ nav {
 nav a {
   font-family: 'Montserrat', sans-serif;
   position: relative;
-  color: rgba(255, 255, 255, 0.85); /* Texto claro con alta legibilidad */
+  color: #ffffff; /* Blanco puro para contraste */
   font-size: 13px;
   font-weight: 700;
   text-decoration: none;
@@ -89,6 +91,8 @@ nav a {
   text-transform: uppercase;
   letter-spacing: 1.5px;
   padding: 5px 0;
+  /* Sombra de texto para que resalte sobre cualquier color de video */
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 nav a::before {
@@ -105,8 +109,8 @@ nav a::before {
 }
 
 nav a:hover {
-  color: #ffffff !important;
-  text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+  color: #6fb1c7;
+  text-shadow: 0 2px 10px rgba(111, 177, 199, 0.3);
 }
 
 nav a:hover::before {
@@ -117,6 +121,7 @@ nav a:hover::before {
 /* Efecto para el enlace activo */
 nav a.active {
   color: #6fb1c7;
+  text-shadow: 0 2px 10px rgba(111, 177, 199, 0.3);
 }
 
 nav a.active::before {
@@ -132,6 +137,7 @@ nav a.active::before {
   display: none;
   transition: transform 0.3s ease;
   z-index: 3000; /* Asegura que esté por encima del nav fixed */
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
 .menu-toggle:hover {
@@ -438,6 +444,8 @@ nav a.active::before {
   display: flex;
   flex-direction: column;
   height: 100%;
+  will-change: transform, box-shadow; /* Optimización de rendimiento */
+  backface-visibility: hidden; /* Evita parpadeos en animaciones */
 }
 
 .producto-card:hover {
@@ -725,6 +733,7 @@ nav a.active::before {
   max-height: 75vh;
   background: #000;
   object-fit: contain;
+  pointer-events: none; /* Evita interacciones directas como click derecho para activar sonido */
 }
 
 .video-modal-close {

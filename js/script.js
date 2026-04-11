@@ -47,10 +47,17 @@ const mostrarElemento = () => {
   });
 };
 
+let ticking = false;
 window.addEventListener('scroll', () => {
-  header?.classList.toggle('scrolled', window.scrollY > 50);
-  mostrarElemento();
-  if (esMobil()) autoplayPorScroll();
+  if (!ticking) {
+    window.requestAnimationFrame(() => {
+      header?.classList.toggle('scrolled', window.scrollY > 50);
+      mostrarElemento();
+      if (esMobil()) autoplayPorScroll();
+      ticking = false;
+    });
+    ticking = true;
+  }
 });
 
 // ══════════════════════════════════════════════════
@@ -97,39 +104,57 @@ function configurarAutoplayMovil(wrap, video) {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        cargarVideoSiNecesario(video);
-        video.play().then(() => wrap.classList.add('playing')).catch(() => {});
+        // Delay to avoid saturation during fast scroll
+        const playTimeout = setTimeout(() => {
+          if (entry.isIntersecting) {
+            cargarVideoSiNecesario(video);
+            video.play()
+              .then(() => wrap.classList.add('playing'))
+              .catch(() => {});
+          }
+        }, 150);
+        video.dataset.playTimeout = playTimeout;
       } else {
+        clearTimeout(video.dataset.playTimeout);
         video.pause();
-        video.currentTime = 0;
         wrap.classList.remove('playing');
       }
     });
-  }, { threshold: 0.55 });
+  }, { 
+    threshold: 0.1,
+    rootMargin: '50px' // Start loading slightly before entering viewport
+  });
   observer.observe(wrap);
 }
 
 function autoplayPorScroll() {
   if ('IntersectionObserver' in window) return;
   const vh = window.innerHeight;
-  document.querySelectorAll('.producto-img-wrap').forEach(wrap => {
-    const video = wrap.querySelector('video');
-    if (!video) return;
-    const rect = wrap.getBoundingClientRect();
-    const visible = rect.top < vh * 0.8 && rect.bottom > vh * 0.2;
-    if (visible) {
-      cargarVideoSiNecesario(video);
-      video.play().then(() => wrap.classList.add('playing')).catch(() => {});
-    } else {
-      video.pause();
-      video.currentTime = 0;
-      wrap.classList.remove('playing');
-    }
+  // Usar requestAnimationFrame para suavizar el scroll
+  requestAnimationFrame(() => {
+    document.querySelectorAll('.producto-img-wrap').forEach(wrap => {
+      const video = wrap.querySelector('video');
+      if (!video) return;
+      const rect = wrap.getBoundingClientRect();
+      const visible = rect.top < vh * 0.8 && rect.bottom > vh * 0.2;
+      if (visible) {
+        cargarVideoSiNecesario(video);
+        video.play().then(() => wrap.classList.add('playing')).catch(() => {});
+      } else {
+        video.pause();
+        wrap.classList.remove('playing');
+      }
+    });
   });
 }
 
 function cargarVideoSiNecesario(video) {
   if (video.dataset.src && !video.src) {
+    // Hide poster once video starts playing to ensure clean transition
+    video.addEventListener('playing', () => {
+      video.removeAttribute('poster');
+    }, { once: true });
+    
     video.src = video.dataset.src;
     video.load();
   }
@@ -194,6 +219,7 @@ function activarModalVideos() {
       cargarVideoSiNecesario(video);
       modal.classList.add('show');
       modalVideo.src = video.src || video.dataset.src;
+      modalVideo.muted = true; // Asegurar que el modal esté silenciado
       modalVideo.load();
       modalVideo.play().catch(() => {});
       document.body.style.overflow = 'hidden';
