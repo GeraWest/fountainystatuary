@@ -1,32 +1,14 @@
 // ══════════════════════════════════════════════════
-// 🔥 FIX BACK/FORWARD CACHE
-// ══════════════════════════════════════════════════
-window.addEventListener("pageshow", () => {
-  const cards = document.querySelectorAll('.producto-card');
-  const dividers = document.querySelectorAll('.section-divider');
-  cards.forEach(card => {
-    card.classList.remove('hidden');
-    card.classList.add('visible');
-  });
-  dividers.forEach(divider => {
-    divider.classList.remove('hidden');
-  });
-  document.querySelectorAll('.filtro-btn').forEach(btn => btn.classList.remove('active'));
-  document.querySelector('.filtro-btn[data-filtro="all"]')?.classList.add('active');
-});
-
-// ══════════════════════════════════════════════════
-// 🔥 MENU MOBILE
+// MENU MOBILE
 // ══════════════════════════════════════════════════
 const menuToggle = document.getElementById('menu-toggle');
 const nav = document.getElementById('nav');
+
 menuToggle?.addEventListener('click', () => {
   nav.classList.toggle('active');
-  // Toggle icon between ☰ and ✕
   menuToggle.innerText = nav.classList.contains('active') ? '✕' : '☰';
 });
 
-// Close menu when a link is clicked
 nav?.querySelectorAll('a').forEach(link => {
   link.addEventListener('click', () => {
     nav.classList.remove('active');
@@ -35,216 +17,164 @@ nav?.querySelectorAll('a').forEach(link => {
 });
 
 // ══════════════════════════════════════════════════
-// 🔥 HEADER SCROLL & FADE-IN
+// HEADER SCROLL
 // ══════════════════════════════════════════════════
 const header = document.querySelector('.header');
-const elementos = document.querySelectorAll('.fade-in');
 
-const mostrarElemento = () => {
-  const trigger = window.innerHeight * 0.85;
-  elementos.forEach(el => {
-    if (el.getBoundingClientRect().top < trigger) el.classList.add('show');
-  });
-};
-
-let ticking = false;
 window.addEventListener('scroll', () => {
-  if (!ticking) {
-    window.requestAnimationFrame(() => {
-      header?.classList.toggle('scrolled', window.scrollY > 50);
-      mostrarElemento();
-      if (esMobil()) autoplayPorScroll();
-      ticking = false;
+  header?.classList.toggle('scrolled', window.scrollY > 50);
+}, { passive: true });
+
+// ══════════════════════════════════════════════════
+// FADE IN AL HACER SCROLL
+// ══════════════════════════════════════════════════
+const fadeEls = document.querySelectorAll('.fade-in');
+const fadeObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('show');
+      fadeObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+fadeEls.forEach(el => fadeObserver.observe(el));
+
+// ══════════════════════════════════════════════════
+// VIDEOS — HOVER en desktop / SCROLL en móvil
+// ══════════════════════════════════════════════════
+const isMobile = window.matchMedia('(hover: none)').matches;
+
+document.querySelectorAll('.producto-img-wrap').forEach(wrap => {
+  const video = wrap.querySelector('video');
+  if (!video) return;
+
+  if (!isMobile) {
+    wrap.addEventListener('mouseenter', () => {
+      if (video.dataset.src) {
+        video.src = video.dataset.src;
+        delete video.dataset.src;
+      }
+      video.play().catch(() => {});
+      wrap.classList.add('playing');
     });
-    ticking = true;
-  }
-});
 
-// ══════════════════════════════════════════════════
-// 🔥 WHATSAPP MENSAJES DINÁMICOS
-// ══════════════════════════════════════════════════
-function configurarWhatsApp() {
-  const WHATSAPP_NUM = "19792035376";
-  const botonesBuy = document.querySelectorAll('.btn-buy');
-  botonesBuy.forEach(btn => {
-    const card = btn.closest('.producto-card');
-    const productName = card?.querySelector('h4')?.innerText || "a product";
-    const mensaje = encodeURIComponent(`Hi, I'd like to inquire about this piece: ${productName}`);
-    btn.href = `https://wa.me/${WHATSAPP_NUM}?text=${mensaje}`;
-    btn.target = "_blank";
-  });
-}
+    wrap.addEventListener('mouseleave', () => {
+      video.pause();
+      video.currentTime = 0;
+      wrap.classList.remove('playing');
+    });
 
-// ══════════════════════════════════════════════════
-// 🔥 DETECCIÓN DE DISPOSITIVO & VIDEOS
-// ══════════════════════════════════════════════════
-function esMobil() { return window.matchMedia('(hover: none)').matches; }
-
-function iniciarVideos() {
-  document.querySelectorAll('.producto-img-wrap').forEach(wrap => {
-    const video = wrap.querySelector('video');
-    if (!video) return;
-    if (esMobil()) configurarAutoplayMovil(wrap, video);
-    else configurarHoverDesktop(wrap, video);
-  });
-}
-
-function configurarHoverDesktop(wrap, video) {
-  wrap.addEventListener('mouseenter', () => {
-    cargarVideoSiNecesario(video);
-    video.play().catch(() => {});
-  });
-  wrap.addEventListener('mouseleave', () => {
-    video.pause();
-    video.currentTime = 0;
-  });
-}
-
-function configurarAutoplayMovil(wrap, video) {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
+  } else {
+    const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
-        // En móviles, NO hacemos autoplay automático para ahorrar CPU/Batería
-        // Solo preparamos la card para que se vea bien
-        if (!esMobil()) {
-          const playTimeout = setTimeout(() => {
-            if (entry.isIntersecting) {
-              cargarVideoSiNecesario(video);
-              video.play().then(() => wrap.classList.add('playing')).catch(() => {});
-            }
-          }, 200);
-          video.dataset.playTimeout = playTimeout;
+        if (video.dataset.src) {
+          video.src = video.dataset.src;
+          delete video.dataset.src;
         }
+        video.play().catch(() => {});
+        wrap.classList.add('playing');
       } else {
-        // DESCARGA AGRESIVA DE MEMORIA: Quitamos el src cuando no se ve
-        clearTimeout(video.dataset.playTimeout);
         video.pause();
-        video.src = ""; 
-        video.load(); 
         wrap.classList.remove('playing');
       }
-    });
-  }, { 
-    threshold: 0.1,
-    rootMargin: '100px' 
-  });
-  observer.observe(wrap);
-}
+    }, { threshold: 0.4 });
 
-function autoplayPorScroll() {
-  // Desactivado para móviles en favor de fluidez total
-  return;
-}
-
-function cargarVideoSiNecesario(video) {
-  if (video.dataset.src && !video.src) {
-    // Hide poster once video starts playing to ensure clean transition
-    video.addEventListener('playing', () => {
-      video.removeAttribute('poster');
-    }, { once: true });
-    
-    video.src = video.dataset.src;
-    video.load();
+    observer.observe(wrap);
   }
+});
+
+// ══════════════════════════════════════════════════
+// MODAL — VIDEO o IMAGEN según la card
+// ══════════════════════════════════════════════════
+const modal = document.getElementById('videoModal');
+const modalVideo = document.getElementById('modalVideo');
+const modalImg = document.getElementById('modalImg');
+const closeBtn = document.getElementById('videoModalClose');
+
+document.querySelectorAll('.producto-card').forEach(card => {
+  card.style.cursor = 'pointer';
+
+  card.addEventListener('click', (e) => {
+    if (e.target.closest('.btn-buy')) return;
+
+    const wrap = card.querySelector('.producto-img-wrap');
+    const video = wrap?.querySelector('video');
+    const img = wrap?.querySelector('img');
+    const nombre = card.querySelector('h4')?.innerText || '';
+    const waBtn = modal.querySelector('.btn-whatsapp');
+
+    if (waBtn) {
+      waBtn.href = `https://wa.me/19792035376?text=${encodeURIComponent('Hi, interested in: ' + nombre)}`;
+    }
+
+    if (video) {
+      // Card con video — mostrar video
+      const src = video.src || video.dataset.src;
+      if (!src) return;
+      modalVideo.src = src;
+      modalVideo.muted = true;
+      modalVideo.style.display = 'block';
+      if (modalImg) modalImg.style.display = 'none';
+      modalVideo.play().catch(() => {});
+    } else if (img) {
+      // Card solo con imagen — mostrar imagen
+      modalVideo.pause();
+      modalVideo.src = '';
+      modalVideo.style.display = 'none';
+      if (modalImg) {
+        modalImg.src = img.src;
+        modalImg.style.display = 'block';
+      }
+    }
+
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  });
+});
+
+function cerrarModal() {
+  modal?.classList.remove('show');
+  if (modalVideo) { modalVideo.pause(); modalVideo.src = ''; }
+  document.body.style.overflow = 'auto';
 }
 
-// ══════════════════════════════════════════════════
-// 🔥 FILTROS
-// ══════════════════════════════════════════════════
-const filtrosBtns = document.querySelectorAll('.filtro-btn');
-const productoCards = document.querySelectorAll('.producto-card');
-const sectionDividers = document.querySelectorAll('.section-divider');
+closeBtn?.addEventListener('click', cerrarModal);
+modal?.addEventListener('click', (e) => { if (e.target === modal) cerrarModal(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') cerrarModal(); });
 
-filtrosBtns.forEach(btn => {
+// ══════════════════════════════════════════════════
+// FILTROS
+// ══════════════════════════════════════════════════
+document.querySelectorAll('.filtro-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    filtrosBtns.forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    
-    const filtro = btn.getAttribute('data-filtro');
 
-    // Filtrar Cards
-    productoCards.forEach(card => {
-      const categoria = card.getAttribute('data-categoria');
-      if (filtro === 'all' || categoria === filtro) {
-        card.classList.remove('hidden');
-      } else {
-        card.classList.add('hidden');
-      }
+    const filtro = btn.dataset.filtro;
+
+    document.querySelectorAll('.producto-card').forEach(card => {
+      card.classList.toggle('hidden', filtro !== 'all' && card.dataset.categoria !== filtro);
     });
 
-    // Filtrar Section Dividers
-    sectionDividers.forEach(divider => {
-      const categoria = divider.getAttribute('data-categoria');
-      if (filtro === 'all' || categoria === filtro) {
-        divider.classList.remove('hidden');
-      } else {
-        divider.classList.add('hidden');
-      }
+    document.querySelectorAll('.section-divider').forEach(div => {
+      div.classList.toggle('hidden', filtro !== 'all' && div.dataset.categoria !== filtro);
     });
   });
 });
 
 // ══════════════════════════════════════════════════
-// 🔥 MODAL VIDEO (CLIC EN CARD -> VIDEO)
+// WHATSAPP DINÁMICO
 // ══════════════════════════════════════════════════
-function activarModalVideos() {
-  const modal = document.getElementById('videoModal');
-  const modalVideo = document.getElementById('modalVideo');
-  const closeBtn = document.getElementById('videoModalClose');
-
-  document.querySelectorAll('.producto-card').forEach(card => {
-    const wrap = card.querySelector('.producto-img-wrap');
-    if (!wrap) return;
-
-    card.style.cursor = 'pointer'; 
-    card.addEventListener('click', (e) => {
-      if (e.target.closest('.btn-buy')) return;
-
-      const videoDataSrc = wrap.querySelector('video')?.dataset.src;
-      if (!videoDataSrc) return;
-
-      // Resetear el video del modal antes de cargar el nuevo
-      modalVideo.pause();
-      modalVideo.src = "";
-      modalVideo.load();
-
-      modal.classList.add('show');
-      modalVideo.src = videoDataSrc;
-      modalVideo.muted = true;
-      modalVideo.load();
-      modalVideo.play().catch(() => {});
-      document.body.style.overflow = 'hidden';
-      
-      const productName = card.querySelector('h4').innerText;
-      const modalWhatsappBtn = modal.querySelector('.btn-whatsapp');
-      if (modalWhatsappBtn) {
-        modalWhatsappBtn.href = `https://wa.me/19792035376?text=${encodeURIComponent("Hi, I'm interested in this piece: " + productName)}`;
-      }
-    });
-  });
-
-  closeBtn?.addEventListener('click', cerrarModalVideo);
-  modal?.addEventListener('click', (e) => { if (e.target === modal) cerrarModalVideo(); });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') cerrarModalVideo(); });
-
-  function cerrarModalVideo() {
-    modal.classList.remove('show');
-    modalVideo.pause();
-    modalVideo.src = "";
-    document.body.style.overflow = 'auto';
-  }
-}
+document.querySelectorAll('.btn-buy').forEach(btn => {
+  const nombre = btn.closest('.producto-card')?.querySelector('h4')?.innerText || 'a product';
+  btn.href = `https://wa.me/19792035376?text=${encodeURIComponent('Hi, interested in: ' + nombre)}`;
+  btn.target = '_blank';
+});
 
 // ══════════════════════════════════════════════════
-// 🔥 INIT
+// Deshabilitar clic derecho en videos e imágenes
 // ══════════════════════════════════════════════════
-window.addEventListener('load', () => {
-  mostrarElemento();
-  iniciarVideos();
-  activarModalVideos();
-  configurarWhatsApp();
-  productoCards.forEach(card => {
-    card.classList.remove('hidden');
-    card.classList.add('visible');
-  });
+document.querySelectorAll('video, .producto-img-wrap img').forEach(el => {
+  el.addEventListener('contextmenu', e => e.preventDefault());
 });
