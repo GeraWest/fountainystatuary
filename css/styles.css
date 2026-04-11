@@ -40,24 +40,31 @@ body {
 
 .logo {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 24px; /* Reducido de 30px */
+  font-size: 24px; 
   font-weight: 700;
   font-style: italic;
   color: #ffffff;
   letter-spacing: 1px;
-  margin-right: 40px; /* Reducido de 60px */
+  margin-right: 40px;
   text-transform: none;
   cursor: pointer;
   transition: all 0.4s ease;
   position: relative;
-  /* Sombra de texto reforzada para máxima visibilidad */
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  white-space: nowrap; /* Evita que el logo se rompa en dos líneas */
 }
 
 @media (max-width: 480px) {
   .logo {
-    font-size: 20px; /* Aún más pequeño en celulares pequeños */
-    margin-right: 20px;
+    font-size: 18px; /* Reducido un poco más para que quepa en una línea */
+    margin-right: 10px;
+    letter-spacing: 0.5px; /* Comprimir un poco las letras en móviles */
+  }
+}
+
+@media (max-width: 360px) {
+  .logo {
+    font-size: 16px; /* Para celulares extra pequeños */
   }
 }
 
@@ -152,11 +159,21 @@ nav a.active::before {
 }
 
 @media (max-width: 768px) {
-  .header {
-    padding: 12px 20px;
-    background: rgba(10, 40, 60, 0.95);
-    backdrop-filter: blur(10px);
+  .header.scrolled {
+    background: #0a283c;
+    backdrop-filter: none; /* Quitamos blur en móvil para ahorrar GPU */
+    -webkit-backdrop-filter: none;
   }
+  
+  .producto-card {
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* Sombras más simples en móvil */
+    will-change: auto; /* Evitar que el móvil reserve demasiada memoria */
+  }
+  
+  .producto-card:hover {
+    transform: none; /* Desactivar efectos hover pesados en táctiles */
+  }
+}
   .menu-toggle {
     display: block;
     font-size: 28px;

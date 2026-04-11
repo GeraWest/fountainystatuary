@@ -104,48 +104,36 @@ function configurarAutoplayMovil(wrap, video) {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        // Delay to avoid saturation during fast scroll
-        const playTimeout = setTimeout(() => {
-          if (entry.isIntersecting) {
-            cargarVideoSiNecesario(video);
-            video.play()
-              .then(() => wrap.classList.add('playing'))
-              .catch(() => {});
-          }
-        }, 150);
-        video.dataset.playTimeout = playTimeout;
+        // En móviles, NO hacemos autoplay automático para ahorrar CPU/Batería
+        // Solo preparamos la card para que se vea bien
+        if (!esMobil()) {
+          const playTimeout = setTimeout(() => {
+            if (entry.isIntersecting) {
+              cargarVideoSiNecesario(video);
+              video.play().then(() => wrap.classList.add('playing')).catch(() => {});
+            }
+          }, 200);
+          video.dataset.playTimeout = playTimeout;
+        }
       } else {
+        // DESCARGA AGRESIVA DE MEMORIA: Quitamos el src cuando no se ve
         clearTimeout(video.dataset.playTimeout);
         video.pause();
+        video.src = ""; 
+        video.load(); 
         wrap.classList.remove('playing');
       }
     });
   }, { 
     threshold: 0.1,
-    rootMargin: '50px' // Start loading slightly before entering viewport
+    rootMargin: '100px' 
   });
   observer.observe(wrap);
 }
 
 function autoplayPorScroll() {
-  if ('IntersectionObserver' in window) return;
-  const vh = window.innerHeight;
-  // Usar requestAnimationFrame para suavizar el scroll
-  requestAnimationFrame(() => {
-    document.querySelectorAll('.producto-img-wrap').forEach(wrap => {
-      const video = wrap.querySelector('video');
-      if (!video) return;
-      const rect = wrap.getBoundingClientRect();
-      const visible = rect.top < vh * 0.8 && rect.bottom > vh * 0.2;
-      if (visible) {
-        cargarVideoSiNecesario(video);
-        video.play().then(() => wrap.classList.add('playing')).catch(() => {});
-      } else {
-        video.pause();
-        wrap.classList.remove('playing');
-      }
-    });
-  });
+  // Desactivado para móviles en favor de fluidez total
+  return;
 }
 
 function cargarVideoSiNecesario(video) {
@@ -208,18 +196,21 @@ function activarModalVideos() {
     const wrap = card.querySelector('.producto-img-wrap');
     if (!wrap) return;
 
-    card.style.cursor = 'pointer'; // Indicar que es clicable
+    card.style.cursor = 'pointer'; 
     card.addEventListener('click', (e) => {
-      // Don't open modal if clicking the WhatsApp button (Request Info)
       if (e.target.closest('.btn-buy')) return;
 
-      const video = wrap.querySelector('video');
-      if (!video) return;
+      const videoDataSrc = wrap.querySelector('video')?.dataset.src;
+      if (!videoDataSrc) return;
 
-      cargarVideoSiNecesario(video);
+      // Resetear el video del modal antes de cargar el nuevo
+      modalVideo.pause();
+      modalVideo.src = "";
+      modalVideo.load();
+
       modal.classList.add('show');
-      modalVideo.src = video.src || video.dataset.src;
-      modalVideo.muted = true; // Asegurar que el modal esté silenciado
+      modalVideo.src = videoDataSrc;
+      modalVideo.muted = true;
       modalVideo.load();
       modalVideo.play().catch(() => {});
       document.body.style.overflow = 'hidden';
