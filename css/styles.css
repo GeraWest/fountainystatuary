@@ -24,15 +24,14 @@ body {
   padding: 24px 6%;
   display: flex;
   align-items: center;
-  background: #0a283c; /* Fondo oscuro sólido para máximo contraste */
+  background: transparent; /* Transparente al inicio para ver el video */
   z-index: 1000;
   transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); /* Sombra profesional inicial */
 }
 
 .header.scrolled {
   padding: 14px 6%;
-  background: rgba(10, 40, 60, 0.98); /* Ligeramente transparente al hacer scroll */
+  background: #0a283c; /* Sólido al hacer scroll */
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
@@ -190,18 +189,27 @@ nav a.active::before {
   position: relative;
   height: 100vh;
   min-height: 500px;
+  width: 100%;
   overflow: hidden;
-  margin-top: 70px;
+  margin-top: 0;
+  background: #0a283c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .video-bg {
   position: absolute;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  top: 0;
-  left: 0;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
   z-index: 0;
+  transform: translate(-50%, -50%);
+  object-fit: cover;
+  pointer-events: none; /* Asegura que no interfiera con clics */
 }
 
 .overlay {
@@ -1706,8 +1714,8 @@ nav a.active::before {
 
   /* HERO */
   .hero {
-    margin-top: 60px;
-    height: 85vh;
+    margin-top: 0;
+    height: 100vh;
   }
 
   /* CATÁLOGO */
