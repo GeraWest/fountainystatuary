@@ -719,21 +719,30 @@ nav a.active::before {
   font-size: 16px;
 }
 
-/* Contenedor del video — DESKTOP: se adapta al grid */
+/* ══════════════════════════════════════
+   PROCESS VIDEO — aspect-ratio fijo recorta
+   las barras negras quemadas en el archivo
+══════════════════════════════════════ */
 .process-video {
   position: relative;
-  overflow: hidden;
+  aspect-ratio: 9 / 16;
   border-radius: 15px;
   box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  overflow: hidden;
+  background: #eef1f4;
+  max-width: 340px;
+  margin: 0 auto;
 }
 
-/* ★ FIX PRINCIPAL: sin background negro, height auto ★ */
+/* object-fit cover + inset 0 recorta las barras sin dejar negro */
 .process-video video {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  height: auto;
-  display: block;
+  height: 100%;
   object-fit: cover;
   background: transparent;
+  display: block;
   transition: transform 0.5s ease;
 }
 
@@ -743,9 +752,10 @@ nav a.active::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.15), transparent);
+  background: linear-gradient(to top, rgba(0,0,0,0.1), transparent);
   pointer-events: none;
 }
+
 
 /* ══════════════════════════════════════
    TRABAJOS
@@ -1323,18 +1333,6 @@ nav a.active::before {
     gap: 30px;
   }
 
-  .process-video {
-    max-width: 420px;
-    margin: 0 auto;
-    width: 100%;
-  }
-
-  .process-video video {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    background: transparent;
-  }
 
   .about-block { grid-template-columns: 1fr; gap: 24px; }
   .about-block.reverse { direction: ltr; }
@@ -1419,24 +1417,6 @@ nav a.active::before {
   .process-pro { padding: 50px 16px; }
   .material-list { grid-template-columns: 1fr; }
 
-  /* Video pequeño, centrado, SIN bordes negros */
-  .process-video {
-    max-width: 300px;
-    margin: 0 auto;
-    width: 100%;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    overflow: hidden;
-  }
-
-  .process-video video {
-    width: 100%;
-    height: auto;          /* respeta el aspect ratio real del video */
-    object-fit: cover;
-    background: transparent; /* ← elimina los bordes negros */
-    display: block;
-    transform: none !important; /* desactiva el scale hover en móvil */
-  }
 
   .trabajos { padding: 50px 16px; }
   .trabajos-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
