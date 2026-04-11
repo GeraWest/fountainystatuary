@@ -419,7 +419,6 @@ nav a.active::before {
   .producto-img-wrap:hover img   { opacity: 0; }
 }
 
-/* Ocultar todos los controles nativos en cards */
 .producto-img-wrap video::-webkit-media-controls {
   display: none !important;
 }
@@ -541,7 +540,7 @@ nav a.active::before {
 .btn-buy i { font-size: 14px; }
 
 /* ══════════════════════════════════════
-   MODAL VIDEO — compacto y elegante
+   MODAL VIDEO
 ══════════════════════════════════════ */
 .video-modal {
   position: fixed;
@@ -587,7 +586,6 @@ nav a.active::before {
   object-fit: contain;
 }
 
-/* Ocultar audio y descarga en modal */
 #modalVideo::-webkit-media-controls-mute-button,
 #modalVideo::-webkit-media-controls-volume-slider,
 #modalVideo::-webkit-media-controls-volume-control-container,
@@ -669,7 +667,8 @@ nav a.active::before {
 }
 
 /* ══════════════════════════════════════
-   PROCESO
+   PROCESO — DESKTOP
+   Video a la derecha, sin bordes negros
 ══════════════════════════════════════ */
 .process-pro {
   padding: 70px 20px;
@@ -720,6 +719,7 @@ nav a.active::before {
   font-size: 16px;
 }
 
+/* Contenedor del video — DESKTOP: se adapta al grid */
 .process-video {
   position: relative;
   overflow: hidden;
@@ -727,11 +727,13 @@ nav a.active::before {
   box-shadow: 0 20px 40px rgba(0,0,0,0.2);
 }
 
+/* ★ FIX PRINCIPAL: sin background negro, height auto ★ */
 .process-video video {
   width: 100%;
-  height: 100%;
-  object-fit: contain;
-  background: #000;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  background: transparent;
   transition: transform 0.5s ease;
 }
 
@@ -741,7 +743,7 @@ nav a.active::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.2), transparent);
+  background: linear-gradient(to top, rgba(0,0,0,0.15), transparent);
   pointer-events: none;
 }
 
@@ -1313,15 +1315,27 @@ nav a.active::before {
 
 /* ══════════════════════════════════════
    RESPONSIVE — TABLET (max 900px)
+   El video pasa a columna única, centrado
 ══════════════════════════════════════ */
 @media (max-width: 900px) {
   .process-container {
     grid-template-columns: 1fr;
     gap: 30px;
   }
-  .process-video video {
-    max-height: 400px;
+
+  .process-video {
+    max-width: 420px;
+    margin: 0 auto;
+    width: 100%;
   }
+
+  .process-video video {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    background: transparent;
+  }
+
   .about-block { grid-template-columns: 1fr; gap: 24px; }
   .about-block.reverse { direction: ltr; }
   .about-values { grid-template-columns: 1fr 1fr; }
@@ -1401,9 +1415,28 @@ nav a.active::before {
 
   .btn-buy { width: 100%; align-self: stretch; }
 
+  /* ─── PROCESO EN MÓVIL ─── */
   .process-pro { padding: 50px 16px; }
   .material-list { grid-template-columns: 1fr; }
-  .process-video video { max-height: 300px; }
+
+  /* Video pequeño, centrado, SIN bordes negros */
+  .process-video {
+    max-width: 300px;
+    margin: 0 auto;
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    overflow: hidden;
+  }
+
+  .process-video video {
+    width: 100%;
+    height: auto;          /* respeta el aspect ratio real del video */
+    object-fit: cover;
+    background: transparent; /* ← elimina los bordes negros */
+    display: block;
+    transform: none !important; /* desactiva el scale hover en móvil */
+  }
 
   .trabajos { padding: 50px 16px; }
   .trabajos-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
@@ -1448,6 +1481,10 @@ nav a.active::before {
     border-radius: 16px;
   }
   .video-modal-box video { max-height: 55vh; }
+
+  .process-video {
+    max-width: 240px; /* aún más compacto en pantallas muy chicas */
+  }
 }
 
 /* ══════════════════════════════════════
@@ -1461,7 +1498,6 @@ nav a.active::before {
   .catalogo-header h2 { font-size: 20px; }
   .contact-card-pro { padding: 20px; }
   .map-wrapper { height: 220px; }
-  .process-video video { max-height: 260px; }
   .footer-links { gap: 15px; }
   .footer-links a { font-size: 12px; }
 }

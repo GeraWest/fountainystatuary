@@ -174,7 +174,7 @@ document.querySelectorAll('.btn-buy').forEach(btn => {
 
 // ══════════════════════════════════════════════════
 // Deshabilitar clic derecho en videos e imágenes
-// ══════════════════════════════════════════════════
+// ══════════════════════════════════════════════════git add .
 document.querySelectorAll('video, .producto-img-wrap img').forEach(el => {
   el.addEventListener('contextmenu', e => e.preventDefault());
 });
