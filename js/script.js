@@ -178,3 +178,15 @@ document.querySelectorAll('.btn-buy').forEach(btn => {
 document.querySelectorAll('video, .producto-img-wrap img').forEach(el => {
   el.addEventListener('contextmenu', e => e.preventDefault());
 });
+
+document.querySelectorAll('.producto-info p').forEach(p => {
+  const btn = document.createElement('button');
+  btn.className = 'btn-ver-mas';
+  btn.textContent = 'Ver más';
+  p.after(btn);
+
+  btn.addEventListener('click', () => {
+    const expanded = p.classList.toggle('expanded');
+    btn.textContent = expanded ? 'Ver menos' : 'Ver más';
+  });
+});
