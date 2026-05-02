@@ -96,7 +96,7 @@ document.querySelectorAll('.producto-card').forEach(card => {
   card.style.cursor = 'pointer';
 
   card.addEventListener('click', (e) => {
-    if (e.target.closest('.btn-buy')) return;
+    if (e.target.closest('.btn-buy') || e.target.closest('.btn-ver-mas')) return;
 
     const wrap = card.querySelector('.producto-img-wrap');
     const video = wrap?.querySelector('video');
@@ -182,11 +182,12 @@ document.querySelectorAll('video, .producto-img-wrap img').forEach(el => {
 document.querySelectorAll('.producto-info p').forEach(p => {
   const btn = document.createElement('button');
   btn.className = 'btn-ver-mas';
-  btn.textContent = 'Ver más';
+  btn.textContent = 'Read more';
   p.after(btn);
 
-  btn.addEventListener('click', () => {
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation(); // Evita que se abra el video al expandir texto
     const expanded = p.classList.toggle('expanded');
-    btn.textContent = expanded ? 'Ver menos' : 'Ver más';
+    btn.textContent = expanded ? 'Show less' : 'Read more';
   });
 });
