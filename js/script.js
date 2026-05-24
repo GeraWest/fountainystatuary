@@ -146,20 +146,60 @@ document.addEventListener('keydown', (e) => { if (e.key === 'Escape') cerrarModa
 // ══════════════════════════════════════════════════
 // FILTROS
 // ══════════════════════════════════════════════════
+const filtrosTrigger = document.getElementById('filtrosTrigger');
+const filtrosMenu = document.getElementById('filtrosMenu');
+const selectedCategoryText = filtrosTrigger?.querySelector('.selected-category');
+
+// Toggle dropdown en mobile
+filtrosTrigger?.addEventListener('click', (e) => {
+  e.stopPropagation();
+  filtrosTrigger.classList.toggle('active');
+  filtrosMenu.classList.toggle('show');
+});
+
+// Cerrar dropdown al hacer click fuera
+document.addEventListener('click', (e) => {
+  if (!filtrosTrigger?.contains(e.target) && !filtrosMenu?.contains(e.target)) {
+    filtrosTrigger?.classList.remove('active');
+    filtrosMenu?.classList.remove('show');
+  }
+});
+
 document.querySelectorAll('.filtro-btn').forEach(btn => {
   btn.addEventListener('click', () => {
+    // Actualizar estados de botones
     document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
 
+    // Actualizar texto del trigger (mobile)
+    if (selectedCategoryText) {
+      selectedCategoryText.innerText = btn.innerText;
+    }
+
+    // Cerrar menu (mobile)
+    filtrosTrigger?.classList.remove('active');
+    filtrosMenu?.classList.remove('show');
+
     const filtro = btn.dataset.filtro;
 
+    // Filtrar productos
     document.querySelectorAll('.producto-card').forEach(card => {
       card.classList.toggle('hidden', filtro !== 'all' && card.dataset.categoria !== filtro);
     });
 
+    // Filtrar divisores
     document.querySelectorAll('.section-divider').forEach(div => {
       div.classList.toggle('hidden', filtro !== 'all' && div.dataset.categoria !== filtro);
     });
+
+    // Scroll suave al inicio de la colección si estamos en mobile
+    if (window.innerWidth < 992) {
+      const wrapper = document.querySelector('.filtros-wrapper');
+      if (wrapper) {
+        const offset = wrapper.getBoundingClientRect().top + window.scrollY - 100;
+        window.scrollTo({ top: offset, behavior: 'smooth' });
+      }
+    }
   });
 });
 

@@ -40,18 +40,27 @@
     <p>Explore our handcrafted cement creations, organized by style and design. Each category reflects a unique aesthetic, allowing you to find the perfect piece for your space.</p>
   </div>
 
-  <div class="filtros">
-    <button class="filtro-btn active" data-filtro="all">All</button>
-    <button class="filtro-btn" data-filtro="italian">Italian Fountains</button>
-    <button class="filtro-btn" data-filtro="paris">Paris Fountains</button>
-    <button class="filtro-btn" data-filtro="onix">Ónix Stone</button>
-    <button class="filtro-btn" data-filtro="black">Black Rocks</button>
-    <button class="filtro-btn" data-filtro="bowls">Bowls & Ball</button>
-    <button class="filtro-btn" data-filtro="orleans">New Orleans</button>
-    <button class="filtro-btn" data-filtro="bali">Bali Fountains</button>
-    <button class="filtro-btn" data-filtro="rocks">Rocks Fountains</button>
-    <button class="filtro-btn" data-filtro="oriental">Oriental Statuary</button>
-    <button class="filtro-btn" data-filtro="bowl">Bowl Fountain</button>
+  <div class="filtros-wrapper">
+    <!-- Trigger para Mobile -->
+    <button class="filtros-mobile-trigger" id="filtrosTrigger">
+      <span class="trigger-label">Explore Collection</span>
+      <span class="selected-category">All</span>
+      <i class="fas fa-chevron-down"></i>
+    </button>
+
+    <div class="filtros" id="filtrosMenu">
+      <button class="filtro-btn active" data-filtro="all">All</button>
+      <button class="filtro-btn" data-filtro="italian">Italian Fountains</button>
+      <button class="filtro-btn" data-filtro="paris">Paris Fountains</button>
+      <button class="filtro-btn" data-filtro="onix">Ónix Stone</button>
+      <button class="filtro-btn" data-filtro="black">Black Rocks</button>
+      <button class="filtro-btn" data-filtro="bowls">Bowls & Ball</button>
+      <button class="filtro-btn" data-filtro="orleans">New Orleans</button>
+      <button class="filtro-btn" data-filtro="bali">Bali Fountains</button>
+      <button class="filtro-btn" data-filtro="rocks">Rocks Fountains</button>
+      <button class="filtro-btn" data-filtro="oriental">Oriental Statuary</button>
+      <button class="filtro-btn" data-filtro="bowl">Bowl Fountain</button>
+    </div>
   </div>
 
   <div class="productos-grid">
