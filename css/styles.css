@@ -271,38 +271,78 @@ nav a.active::before {
 }
 
 /* ══════════════════════════════════════
-   FILTROS
+   FILTROS — PREMIUM REDESIGN
 ══════════════════════════════════════ */
 .filtros {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 12px;
-  justify-content: center;
-  margin-bottom: 50px;
+  justify-content: flex-start;
+  margin-bottom: 60px;
+  padding: 10px 5px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+}
+
+.filtros::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+@media (min-width: 992px) {
+  .filtros {
+    justify-content: center;
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
 }
 
 .filtro-btn {
-  background: #f8f9fa;
-  border: 1px solid #e9ecef;
-  color: #2d3436;
-  padding: 10px 24px;
-  border-radius: 6px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #4a4a4a;
+  padding: 12px 28px;
+  border-radius: 50px; /* Pill style */
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  letter-spacing: 0.3px;
+  position: relative;
+  overflow: hidden;
 }
 
 .filtro-btn:hover {
-  background: #e9ecef;
-  border-color: #dee2e6;
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  color: #1a1a1a;
 }
 
 .filtro-btn.active {
-  background: #2d3436;
-  border-color: #2d3436;
+  background: #0a283c; /* Elegant dark blue/black from header */
+  border-color: #0a283c;
   color: #ffffff;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 25px rgba(10, 40, 60, 0.25);
+  transform: translateY(-1px);
+}
+
+.filtro-btn.active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(rgba(255,255,255,0.1), transparent);
+  pointer-events: none;
+}
+
+.filtro-btn:active {
+  transform: translateY(0);
 }
 
 /* ══════════════════════════════════════
