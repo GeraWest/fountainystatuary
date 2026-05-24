@@ -154,7 +154,7 @@ const selectedCategoryText = filtrosTrigger?.querySelector('.selected-category')
 filtrosTrigger?.addEventListener('click', (e) => {
   e.stopPropagation();
   filtrosTrigger.classList.toggle('active');
-  filtrosMenu.classList.toggle('show');
+  filtrosMenu?.classList.toggle('show');
 });
 
 // Cerrar dropdown al hacer click fuera
@@ -182,14 +182,9 @@ document.querySelectorAll('.filtro-btn').forEach(btn => {
 
     const filtro = btn.dataset.filtro;
 
-    // Filtrar productos
-    document.querySelectorAll('.producto-card').forEach(card => {
-      card.classList.toggle('hidden', filtro !== 'all' && card.dataset.categoria !== filtro);
-    });
-
-    // Filtrar divisores
-    document.querySelectorAll('.section-divider').forEach(div => {
-      div.classList.toggle('hidden', filtro !== 'all' && div.dataset.categoria !== filtro);
+    // Filtrar productos y divisores
+    document.querySelectorAll('.producto-card, .section-divider').forEach(el => {
+      el.classList.toggle('hidden', filtro !== 'all' && el.dataset.categoria !== filtro);
     });
 
     // Scroll suave al inicio de la colección si estamos en mobile

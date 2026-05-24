@@ -337,7 +337,6 @@ nav a.active::before {
 
 /* Menu Dropdown Mobile */
 .filtros {
-  display: block; /* Mantener block para controlar visibilidad con opacity/transform */
   position: absolute;
   top: 105%;
   left: 50%;
@@ -357,6 +356,7 @@ nav a.active::before {
   transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
   max-height: 450px;
   overflow-y: auto;
+  display: block; /* Siempre block para controlar visibilidad con opacity/visibility */
 }
 
 .filtros.show {
